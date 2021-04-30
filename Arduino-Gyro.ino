@@ -98,11 +98,10 @@ void loop() {
   Vector raw = gyroscope.readRaw();
  
   // Output raw
-  Serial.print(" Xraw = ");
   Serial.print(raw.XAxis);
-  Serial.print(" Yraw = ");
+  Serial.print(";");
   Serial.print(raw.XAxis);
-  Serial.print(" Zraw = ");
+  Serial.print(";");
   Serial.print(raw.YAxis);
 
   Serial.println();

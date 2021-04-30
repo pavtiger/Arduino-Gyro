@@ -2,7 +2,7 @@ import * as THREE from "./three.module.js";
 
 import * as GRID from "./methods.js"
 
-// let socket = io("http://" + window.location.hostname + ":" + window.location.port);
+let socket = io("http://" + window.location.hostname + ":" + window.location.port);
 
 
 
@@ -20,16 +20,17 @@ window.onload = function() {
     let renderer = tmp[1];
     let camera = tmp[2];
     let controls = tmp[3];
+    let A = 100, B = 1, OLDX = 0, OLDY = 0, OLDZ = 0;
 
     let stats = GRID.initStats(Stats);
 
-    // socket.on("connect", function() {
-    //     socket.emit("message", "I am connected");
-    // });
-    //
-    // socket.on("update", function(msg) {
-    //     allPlayers = JSON.parse(msg);
-    // });
+
+    socket.on("update", function(msg) {
+        OLDX = (A * OLDX + B * msg[0]) / (A + B);
+        OLDY = (A * OLDY + B * msg[1]) / (A + B);
+        OLDZ = (A * OLDZ + B * msg[2]) / (A + B);
+        // window.pen.rotation.set(OLDX * Math.PI / 180, OLDY * Math.PI / 180, OLDZ * Math.PI / 180);
+    });
 
 
     // Main loop

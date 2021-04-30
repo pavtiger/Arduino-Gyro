@@ -94,13 +94,8 @@ void setup()
   gyroscope.setThreshold(3);
 }
  
-void loop()
-{
-  // Read normalized values
+void loop() {
   Vector raw = gyroscope.readRaw();
- 
-  // Read normalized values in deg/sec
-  Vector norm = gyroscope.readNormalize();
  
   // Output raw
   Serial.print(" Xraw = ");
@@ -109,14 +104,6 @@ void loop()
   Serial.print(raw.XAxis);
   Serial.print(" Zraw = ");
   Serial.print(raw.YAxis);
- 
-  // Output normalized
-  Serial.print(" Xnorm = ");
-  Serial.print(norm.XAxis);
-  Serial.print(" Ynorm = ");
-  Serial.print(norm.YAxis);
-  Serial.print(" ZNorm = ");
-  Serial.print(norm.ZAxis);
- 
+
   Serial.println();
 }

@@ -6,7 +6,7 @@ import socketio
 from ip import ip_address, port
 
 
-ser = serial.Serial("/dev/ttyACM0", 9600)
+ser = serial.Serial("/dev/ttyACM1", 9600)
 sio = socketio.Client()
 sio.connect(f'http://{ip_address}:{port}')
 
@@ -16,4 +16,4 @@ while True:
      cc = str(ser.readline())
      print(cc[2:][:-5])
      sio.emit('add', cc[2:][:-5])
-     sleep(0.005) # 0.005
+     sleep(0.002) # 0.005

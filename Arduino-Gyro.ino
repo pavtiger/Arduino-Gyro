@@ -1,108 +1,83 @@
+// Connect GND, S1 and SR pins together.
+
 #include <Wire.h>
-#include <L3G4200D.h>
- 
-L3G4200D gyroscope;
- 
-void setup() 
-{
-  Serial.begin(9600);
-  Serial.println("Initialize L3G4200D");
- 
-  while(!gyroscope.begin(L3G4200D_SCALE_2000DPS, L3G4200D_DATARATE_400HZ_50))
-  {
-    Serial.println("Could not find a valid L3G4200D sensor, check wiring!");
-    delay(500);
-  }
- 
-  // Check selected scale
-  Serial.print("Selected scale: ");
- 
-  switch(gyroscope.getScale())
-  {
-    case L3G4200D_SCALE_250DPS:
-      Serial.println("250 dps");
-      break;
-    case L3G4200D_SCALE_500DPS:
-      Serial.println("500 dps");
-      break;
-    case L3G4200D_SCALE_2000DPS:
-      Serial.println("2000 dps");
-      break;
-    default:
-      Serial.println("unknown");
-      break;
-  }
- 
-  // Check Output Data Rate and Bandwidth
-  Serial.print("Output Data Rate: ");
- 
-  switch(gyroscope.getOdrBw())
-  {
-    case L3G4200D_DATARATE_800HZ_110:
-      Serial.println("800HZ, Cut-off 110");
-      break;
-    case L3G4200D_DATARATE_800HZ_50:
-      Serial.println("800HZ, Cut-off 50");
-      break;
-    case L3G4200D_DATARATE_800HZ_35:
-      Serial.println("800HZ, Cut-off 35");
-      break;
-    case L3G4200D_DATARATE_800HZ_30:
-      Serial.println("800HZ, Cut-off 30");
-      break;
-    case L3G4200D_DATARATE_400HZ_110:
-      Serial.println("400HZ, Cut-off 110");
-      break;
-    case L3G4200D_DATARATE_400HZ_50:
-      Serial.println("400HZ, Cut-off 50");
-      break;
-    case L3G4200D_DATARATE_400HZ_25:
-      Serial.println("400HZ, Cut-off 25");
-      break;
-    case L3G4200D_DATARATE_400HZ_20:
-      Serial.println("400HZ, Cut-off 20");
-      break;
-    case L3G4200D_DATARATE_200HZ_70:
-      Serial.println("200HZ, Cut-off 70");
-      break;
-    case L3G4200D_DATARATE_200HZ_50:
-      Serial.println("200HZ, Cut-off 50");
-      break;
-    case L3G4200D_DATARATE_200HZ_25:
-      Serial.println("200HZ, Cut-off 25");
-      break;
-    case L3G4200D_DATARATE_200HZ_12_5:
-      Serial.println("200HZ, Cut-off 12.5");
-      break;
-    case L3G4200D_DATARATE_100HZ_25:
-      Serial.println("100HZ, Cut-off 25");
-      break;
-    case L3G4200D_DATARATE_100HZ_12_5:
-      Serial.println("100HZ, Cut-off 12.5");
-      break;
-    default:
-      Serial.println("unknown");
-      break;
-  }
- 
-  // Calibrate gyroscope. The calibration must be at rest.
-  // If you don't want calibrate, comment this line.
-  gyroscope.calibrate();
- 
-  // Set threshold sensivty. Default 3.
-  // If you don't want use threshold, comment this line or set 0.
-  gyroscope.setThreshold(3);
+
+float Yaw, Roll, Pitch, magx, magy, magz, accx, accy, accz, gyrox, gyroy, gyroz, q0, q1, q2, q3, Roll2, Pitch2, Yaw2, LIAx, LIAy, LIAz, GRVx, GRVy, GRVz;
+const int GY_955 = 0x29;
+
+void setup() {
+  Wire.begin();
+  Wire.setClock(400000); // I2C clock rate ,You can delete it but it helps the speed of I2C (default rate is 100000 Hz)
+  delay(100);
+  Wire.beginTransmission(GY_955);
+  Wire.write(0x3E); // Power Mode 
+  Wire.write(0x00); // Normal:0X00 (or B00), Low Power: 0X01 (or B01) , Suspend Mode: 0X02 (orB10)
+  Wire.endTransmission();
+  delay(100);
+  Wire.beginTransmission(GY_955);
+  Wire.write(0x3D); // Operation Mode
+  Wire.write(0x0C); // NDOF:0X0C (or B1100) , IMU:0x08 (or B1000) , NDOF_FMC_OFF: 0x0B (or B1011)
+  Wire.endTransmission();
+  delay(100);
+  Serial.begin(115200);  // Setting the baudrate
+  delay(100);
 }
- 
+
 void loop() {
-  Vector raw = gyroscope.readRaw();
- 
-  // Output raw
-  Serial.print(raw.XAxis);
+  Wire.beginTransmission(GY_955);
+  Wire.write(0x08);  
+  Wire.endTransmission(false);
+  Wire.requestFrom(GY_955,32,true);
+  
+  // Accelerometer
+  accx = (int16_t)(Wire.read()|Wire.read()<<8 )/100.00; // m/s^2
+  accy = (int16_t)(Wire.read()|Wire.read()<<8 )/100.00; // m/s^2
+  accz = (int16_t)(Wire.read()|Wire.read()<<8 )/100.00; // m/s^2
+  
+  // Magnetometer
+  magx = (int16_t)(Wire.read()|Wire.read()<<8 )/16.00; // mT
+  magy = (int16_t)(Wire.read()|Wire.read()<<8 )/16.00; // mT
+  magz = (int16_t)(Wire.read()|Wire.read()<<8 )/16.00; // mT
+  
+  // Gyroscope
+  gyrox = (int16_t)(Wire.read()|Wire.read()<<8 )/16.00; // Dps
+  gyroy = (int16_t)(Wire.read()|Wire.read()<<8 )/16.00; // Dps
+  gyroz = (int16_t)(Wire.read()|Wire.read()<<8 )/16.00; // Dps
+  
+  // Euler Angles
+  Yaw=(int16_t)(Wire.read()|Wire.read()<<8 )/16.00;  // in Degrees unit
+  Roll=(int16_t)(Wire.read()|Wire.read()<<8 )/16.00;  // in Degrees unit
+  Pitch=(int16_t)(Wire.read()|Wire.read()<<8 )/16.00;  // in Degrees unit
+  
+  // Quaternions
+  q0 = (int16_t)(Wire.read()|Wire.read()<<8 )/(pow(2,14)); // unit less
+  q1 = (int16_t)(Wire.read()|Wire.read()<<8 )/(pow(2,14)); // unit less
+  q2 = (int16_t)(Wire.read()|Wire.read()<<8 )/(pow(2,14)); // unit less
+  q3 = (int16_t)(Wire.read()|Wire.read()<<8 )/(pow(2,14)); // unit less
+  
+  // Convert Quaternions to Euler Angles
+  Yaw2 = (atan2(2*(q0*q3+q1*q2),1-2*(pow(q2,2)+pow(q3,2))))*180/PI;
+  Roll2 = (asin(2*(q0*q2-q3*q1)))*180/PI;
+  Pitch2 = (atan2(2*(q0*q1+q2*q3),1-2*(pow(q1,2)+pow(q2,2))))*180/PI;
+  // Linear (Dynamic) & Gravitational (static) Acceleration
+  Wire.beginTransmission(0x29);
+  Wire.write(0x28);  
+  Wire.endTransmission(false);
+  Wire.requestFrom(0x29, 12, true);
+  
+  LIAx = (int16_t)(Wire.read()|Wire.read() << 8) / 100.00; // m/s^2
+  LIAy = (int16_t)(Wire.read()|Wire.read() << 8) / 100.00; // m/s^2
+  LIAz = (int16_t)(Wire.read()|Wire.read() << 8) / 100.00; // m/s^2
+  GRVx = (int16_t)(Wire.read()|Wire.read() << 8) / 100.00; // m/s^2
+  GRVy = (int16_t)(Wire.read()|Wire.read() << 8) / 100.00; // m/s^2
+  GRVz = (int16_t)(Wire.read()|Wire.read() << 8) / 100.00; // m/s^2
+  
+  // Print data
+  Serial.print(Yaw);
   Serial.print(";");
-  Serial.print(raw.XAxis);
+  Serial.print(Roll);
   Serial.print(";");
-  Serial.print(raw.YAxis);
+  Serial.print(Pitch);
 
   Serial.println();
 }

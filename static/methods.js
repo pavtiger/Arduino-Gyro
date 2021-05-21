@@ -73,7 +73,12 @@ function init() {
                 .setMaterials( materials )
                 .setPath("models/")
                 .load( "pen.obj", function (object) {
-                    window.pen = object;
+                    let pivotPoint = new THREE.Object3D();
+                    pivotPoint.add(object);
+                    object.position.set(0, 1, 0);
+                    object.rotation.set(0, 0, 3.14);
+
+                    window.pen = pivotPoint;
                     scene.add(window.pen);
 
                 }, onProgress, onError );

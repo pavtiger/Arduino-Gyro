@@ -57,8 +57,11 @@ def send_js(path):
 
 @socketio.on('add')
 def up(data):
-    data = list(map(float, data.split(';')))
-    socketio.emit('update', data)
+    try:
+        data = list(map(float, data.split(';')))
+        socketio.emit('update', data)
+    except:
+        print(data)
 
 
 # def game_loop(name):

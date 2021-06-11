@@ -85,6 +85,13 @@ function init() {
 
         });
 
+    var geometry = new THREE.PlaneGeometry(2, 2);
+    var material = new THREE.MeshBasicMaterial( {color: 0xffffff, side: THREE.DoubleSide} );
+    var plane = new THREE.Mesh( geometry, material );
+    plane.rotation.set(Math.PI / 2, 0, 0);
+    plane.position.y = -0.5;
+    scene.add(plane);
+
     // light
     var directionalLight = new THREE.DirectionalLight(0xFFFFFF, 1);
     directionalLight.position.set(6, 8, 8);

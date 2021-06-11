@@ -5,6 +5,7 @@
 float Yaw, Roll, Pitch, magx, magy, magz, accx, accy, accz, gyrox, gyroy, gyroz, q0, q1, q2, q3, Roll2, Pitch2, Yaw2, LIAx, LIAy, LIAz, GRVx, GRVy, GRVz;
 const int GY_955 = 0x29;
 
+
 void setup() {
   Wire.begin();
   Wire.setClock(400000); // I2C clock rate ,You can delete it but it helps the speed of I2C (default rate is 100000 Hz)
@@ -23,6 +24,7 @@ void setup() {
   delay(100);
 }
 
+
 void loop() {
   Wire.beginTransmission(GY_955);
   Wire.write(0x08);  
@@ -35,14 +37,14 @@ void loop() {
   accz = (int16_t)(Wire.read()|Wire.read()<<8 )/100.00; // m/s^2
   
   // Magnetometer
-  magx = (int16_t)(Wire.read()|Wire.read()<<8 )/16.00; // mT
-  magy = (int16_t)(Wire.read()|Wire.read()<<8 )/16.00; // mT
-  magz = (int16_t)(Wire.read()|Wire.read()<<8 )/16.00; // mT
+  magx = (int16_t)(Wire.read()|Wire.read()<<8 ) / 16.00; // mT
+  magy = (int16_t)(Wire.read()|Wire.read()<<8 ) / 16.00; // mT
+  magz = (int16_t)(Wire.read()|Wire.read()<<8 ) / 16.00; // mT
   
   // Gyroscope
-  gyrox = (int16_t)(Wire.read()|Wire.read()<<8 )/16.00; // Dps
-  gyroy = (int16_t)(Wire.read()|Wire.read()<<8 )/16.00; // Dps
-  gyroz = (int16_t)(Wire.read()|Wire.read()<<8 )/16.00; // Dps
+  gyrox = (int16_t)(Wire.read()|Wire.read()<<8 ) / 16.00; // Dps
+  gyroy = (int16_t)(Wire.read()|Wire.read()<<8 ) / 16.00; // Dps
+  gyroz = (int16_t)(Wire.read()|Wire.read()<<8 ) / 16.00; // Dps
   
   // Euler Angles
   Yaw=(int16_t)(Wire.read()|Wire.read()<<8 )/16.00;  // in Degrees unit
@@ -73,11 +75,19 @@ void loop() {
   GRVz = (int16_t)(Wire.read()|Wire.read() << 8) / 100.00; // m/s^2
   
   // Print data
-  Serial.print(Yaw);
-  Serial.print(";");
-  Serial.print(Roll);
-  Serial.print(";");
-  Serial.print(Pitch);
+  Serial.print(q0);
+  Serial.print("; ");
+  Serial.print(q1);
+  Serial.print("; ");
+  Serial.print(q2);
+  Serial.print("; ");
+  Serial.print(q3);
+  Serial.print("; ");
+  Serial.print(accx);
+  Serial.print("; ");
+  Serial.print(accy);
+  Serial.print("; ");
+  Serial.print(accz);
 
   Serial.println();
 }

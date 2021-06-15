@@ -42,7 +42,7 @@ void setup() {
     (на одном канале может быть только 1 приёмник и до 6 передатчиков).
     Выбираем канал в котором нет шумов!
   */
-  radio.setChannel(0x30);
+  radio.setChannel(0xA);
   /*
     Указываем скорость передачи данных
     RF24_250KBPS = 250Кбит/сек
@@ -87,7 +87,7 @@ void loop() {
     */
     Serial.print("Данные [ ");
     for (i = 0; i < 5; i++) {
-      Serial.print((char) receivedData[i]);
+      Serial.print(receivedData[i]);
       Serial.print(' ');
     }
     Serial.print("] пришли по трубе ");

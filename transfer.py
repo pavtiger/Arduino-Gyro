@@ -6,7 +6,7 @@ import socketio
 from ip import ip_address, port
 
 
-ser = serial.Serial("/dev/ttyACM1", 9600)
+ser = serial.Serial("/dev/ttyACM1", 115200)
 sio = socketio.Client()
 sio.connect(f'http://{ip_address}:{port}')
 

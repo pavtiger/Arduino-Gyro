@@ -61,21 +61,6 @@ def up(data):
 
     socketio.emit('update', data)
 
-    # ab = 9.81
-    # bc = ab * math.cos(min(data[0], 360 - data[0]))
-    # data[3] -= math.sqrt(ab * ab - bc * bc)
-    # print(ab, bc)
-
-    # bc = ab * math.cos(min(data[1], 360 - data[1]))
-    # data[4] -= math.sqrt(ab * ab - bc * bc)
-    # print(ab, bc)
-
-    # bc = ab * math.cos(min(data[2], 360 - data[2]))
-    # data[5] -= math.sqrt(ab * ab - bc * bc)
-    # # print(ab, bc)
-
-    # print(data[3], data[4], data[5]);
-
 
 
 # def game_loop(name):

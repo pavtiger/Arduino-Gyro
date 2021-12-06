@@ -17,7 +17,7 @@ RF24 radio(7, 10);
   Объявляем массив для хранения и передачи данных
   (до 32 байт включительно).
 */
-int receivedData[5];
+int receivedData[7];
  
 /*
   Объявляем переменную в которую будет сохраняться
@@ -85,12 +85,13 @@ void loop() {
       Если данные пришли от 1 передатчика (по 1 трубе),
       то можно выполнить соответствующее действие ...
     */
-    Serial.print("Данные [ ");
-    for (i = 0; i < 5; i++) {
-      Serial.print(receivedData[i]);
-      Serial.print(' ');
+    for (i = 0; i < 7; i++) {
+      double a = receivedData[i];
+      Serial.print(a / 1000);
+      if (i != 6) {
+        Serial.print("; ");
+      }
     }
-    Serial.print("] пришли по трубе ");
-    Serial.println(pipe);
+    Serial.println();
   }
 }

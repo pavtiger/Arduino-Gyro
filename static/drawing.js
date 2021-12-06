@@ -23,38 +23,26 @@ window.onload = function() {
 
 
     socket.on("update", function(msg) {
-        if (msg[0] != undefined && msg[1] != undefined && msg[2] != undefined) {
-            OLDX = (A * OLDX + B * msg[0]) / (A + B);
-            OLDY = (A * OLDY + B * msg[1]) / (A + B);
+        if (msg[0] != undefined && msg[1] != undefined && msg[2] != undefined && msg[3] != undefined) {
+            console.log(msg);
+            // OLDX = (A * OLDX + B * msg[0]) / (A + B);
+            // OLDY = (A * OLDY + B * msg[1]) / (A + B);
             // OLDZ = (A * OLDZ + B * msg[2]) / (A + B);
 
-            // if (OLDX > 330 && msg[0] < 50) {
-            //     OLDX = msg[0]
-            // } else {
-            //     OLDX = (A * OLDX + B * msg[0]) / (A + B);
+            // const a = new THREE.Euler(0, 1, 1.57, 'XYZ');
+            // b.applyEuler(a);
+            // window.pen.rotation.set(0, (msg[1] + Math.PI), 0);
+
+            const quaternion = new THREE.Quaternion(msg[0], msg[1], msg[2], msg[3]);
+            window.pen.rotation.setFromQuaternion(quaternion);
+            // window.pen.position.x += msg[4] / 100;
+            // window.pen.position.y += msg[5] / 100;
+            // window.pen.position.z += msg[6] / 100;
+
+            // if (Date.now() - last > 1000) {
+            //     console.log(OLDX, OLDY, OLDZ);
+            //     last = Date.now();
             // }
-
-            // if (OLDY > 330 && msg[1] < 50) {
-            //     OLDY = msg[0]
-            // } else {
-            //     OLDY = (A * OLDY + B * msg[1]) / (A + B);
-            // }
-
-            // if (OLDZ > 330 && msg[2] < 50) {
-            //     OLDZ = msg[2]
-            // } else {
-            //     OLDZ = (A * OLDZ + B * msg[2]) / (A + B);
-            // }
-
-            window.pen.rotation.set(OLDY * Math.PI + Math.PI / 2, OLDZ * Math.PI, OLDX * Math.PI);
-            // window.pen.position.x += msg[3] / 1000;
-            // window.pen.position.y += msg[4] / 1000;
-            // window.pen.position.z += (msg[5] - 9.81) / 1000;
-
-            if (Date.now() - last > 1000) {
-                console.log(OLDX, OLDY, OLDZ);
-                last = Date.now();
-            }
         }
     });
 
